@@ -1,6 +1,8 @@
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
+using System.Threading.Tasks;
 using OpConnectSdk.Model;
 
 namespace OpConnectSdk.Lib.Core
@@ -24,5 +26,30 @@ namespace OpConnectSdk.Lib.Core
                 new MediaTypeWithQualityHeaderValue("application/json")
             );
         }
+
+        public async Task<T> GetAsync<T>(string endpoint)
+        {
+            var response =  await Client.GetAsync(endpoint.ToString());
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            return Deserialize<T>(json: content);
+        }
+
+        #region Private Methods
+
+        private T Deserialize<T>(string json)
+        {
+            return JsonSerializer.Deserialize<T>(
+                json, 
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }
+            );
+        }
+
+        #endregion Private Methods
     }
 }
