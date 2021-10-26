@@ -1,34 +1,31 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using OpConnectSdk.Lib.Core.Interfaces;
 using OpConnectSdk.Model;
 
-namespace OpConnectSdk
+namespace OpConnectSdk.Lib.Core.Services
 {
-    public class OpConnect
+    public class VaultService : IVaultService
     {
+        const string BASE_URL = "v1/vaults";
+
         private HttpClient _httpClient;
 
-        public OpConnect(string baseUrl, string token)
+        public VaultService(
+            OpClient opClient
+        )
         {
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri(baseUrl);
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-                "Bearer", 
-                token
-            );
-            _httpClient.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json")
-            );
+            _httpClient = opClient.Client;
         }
 
         // Example filter: "name eq \"Connect Test\""
-        public async Task<Vault[]> GetVaultsAsync(string filter = null)
+        public async Task<Vault[]> GetListAsync(string filter = null)
         {
-            var endpoint = new StringBuilder("v1/vaults");
+            var endpoint = new StringBuilder(BASE_URL);
 
             if(!String.IsNullOrEmpty(filter))
             {
@@ -38,9 +35,24 @@ namespace OpConnectSdk
             var response =  await _httpClient.GetAsync(Uri.EscapeUriString(endpoint.ToString()));
             response.EnsureSuccessStatusCode();
 
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync();            
 
             return Deserialize<Vault[]>(json: content);
+        }
+
+        public async Task<Vault> GetAsync(string vaultUuid)
+        {
+            var endpoint = new StringBuilder(BASE_URL);
+            endpoint.AppendFormat("/{0}", vaultUuid);
+
+            var response =  await _httpClient.GetAsync(endpoint.ToString());
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            Console.WriteLine(content);
+
+            return Deserialize<Vault>(json: content);
         }
 
 
@@ -58,5 +70,6 @@ namespace OpConnectSdk
         }
 
         #endregion Private Methods
+
     }
 }

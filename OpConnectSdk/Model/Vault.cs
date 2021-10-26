@@ -1,5 +1,6 @@
 using System;
 using System.Text.Json.Serialization;
+using OpConnectSdk.Model.Enums;
 
 namespace OpConnectSdk.Model
 {

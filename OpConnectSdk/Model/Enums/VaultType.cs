@@ -1,4 +1,4 @@
-namespace OpConnectSdk.Model
+namespace OpConnectSdk.Model.Enums
 {
     public enum VaultType
     {
