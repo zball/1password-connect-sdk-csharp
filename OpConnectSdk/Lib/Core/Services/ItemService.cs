@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using OpConnectSdk.Lib.Core.Interfaces;
@@ -8,12 +9,12 @@ namespace OpConnectSdk.Lib.Core.Services
 {
     public class ItemService : ApiService, IItemService
     {
-        const string BASE_URL = "/v1/vaults/{vaultUUID}/items";
+        public const string BASE_URL = "/v1/vaults/{vaultUUID}/items";
 
         public ItemService(OpClient opClient) : base(opClient){ }
 
         // Example filter: "name eq \"Connect Test\""
-        public async Task<Item[]> GetListAsync(string vaultUuid, string filter = null)
+        public async Task<List<Item>> GetListAsync(string vaultUuid, string filter = null)
         {
             var endpoint = new StringBuilder(BASE_URL).Replace("{vaultUUID}", vaultUuid);
 
@@ -22,7 +23,7 @@ namespace OpConnectSdk.Lib.Core.Services
                 endpoint.AppendFormat("?filter={0}", filter);
             }
 
-           return await _httpClient.GetAsync<Item[]>(Uri.EscapeUriString(endpoint.ToString()));
+           return await _httpClient.GetAsync<List<Item>>(Uri.EscapeUriString(endpoint.ToString()));
         }
 
         public async Task<Item> GetAsync(string vaultUuid, string itemUuid)

@@ -27,7 +27,7 @@ namespace OpConnectSdk.Lib.Core
             );
         }
 
-        public async Task<T> GetAsync<T>(string endpoint)
+        public virtual async Task<T> GetAsync<T>(string endpoint)
         {
             var response =  await Client.GetAsync(endpoint.ToString());
             response.EnsureSuccessStatusCode();
