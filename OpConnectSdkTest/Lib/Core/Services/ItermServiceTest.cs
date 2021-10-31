@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -11,6 +13,37 @@ using Xunit;
 
 namespace OpConnectSdkTest
 {
+    public class CreactAsyncTestData : IEnumerable<object[]>
+    {
+        public IEnumerator<object[]> GetEnumerator()
+        {
+            yield return new object[] { new Item() };
+            yield return new object[] { new Item
+                {
+                    Vault = new Vault()
+                } 
+            };
+            yield return new object[] { new Item
+                {
+                    Vault = new Vault
+                        {
+                            Id = ""
+                        }
+                } 
+            };
+            yield return new object[] { new Item
+                {
+                    Vault = new Vault
+                        {
+                            Id = " "
+                        }
+                } 
+            };
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
     public class ItemServiceTest : BaseServiceTest
     {
         
@@ -123,5 +156,56 @@ namespace OpConnectSdkTest
             Assert.Equal($"{ItemService.BASE_URL.Replace("{vaultUUID}", vaultId)}/{item.Id}", capturedValue);
             Assert.Equal(response.Title, item.Title);
         }
+
+        [Theory]
+        [ClassData(typeof(CreactAsyncTestData))]
+        public async Task CreateAsync_When_VaultIncorrectlySet_ThrowsArgumentException(Item item)
+        {
+            // Arrange, Act & Assert
+            var exception = await Assert.ThrowsAsync<ArgumentException>( 
+                () => _sut.CreateAsync(item)
+            );
+            Assert.Equal($"ItemService.CreateAsync: {ItemService.ERROR_NO_VAULT_ID}", exception.Message);
+        }
+
+        [Fact]
+        public async Task CreateAsync_WhenNotSuccessful_ThrowsException()
+        {
+            // Arrange
+            var faker = new Faker();
+            var item = new Item { Vault = new Vault { Id = faker.Random.String(10) } };
+            OpClient.Setup(
+                  e => e.PostAsync<CreateItemDto, Item>( It.IsAny<string>(), It.IsAny<CreateItemDto>() )
+            ).Throws(new HttpRequestException(null, null, statusCode: HttpStatusCode.BadRequest));  
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<HttpRequestException>( 
+                () => _sut.CreateAsync(item) 
+            );
+            Assert.Equal(HttpStatusCode.BadRequest, exception.StatusCode);
+        }
+
+        [Fact]
+        public async Task CreateAsync_WhenSuccessful_ReturnsItem()
+        {
+            // Arrange
+            var faker = new Faker();
+            var item = new Item { Vault = new Vault { Id = faker.Random.String(10) } };
+            var capturedValue = string.Empty;
+            var captureMatch = new CaptureMatch<string>(s => capturedValue = s);
+
+            OpClient.Setup(
+                  e => e.PostAsync<CreateItemDto, Item>( Capture.With(captureMatch), It.IsAny<CreateItemDto>() )
+            ).ReturnsAsync(item);  
+
+            // Act
+           var response = await _sut.CreateAsync(item);
+
+            // Assert
+            Assert.Equal($"{ItemService.BASE_URL.Replace("{vaultUUID}", item.Vault.Id)}", capturedValue);
+            Assert.Equal(response.Title, item.Title);
+        }
     }
+
+
 }

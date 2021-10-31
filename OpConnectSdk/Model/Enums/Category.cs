@@ -1,5 +1,9 @@
 namespace OpConnectSdk.Model.Enums
 {
+    /// <summary>
+    /// Allowed Item Categories.
+    /// See: https://support.1password.com/connect-api-reference/#item-object
+    /// </summary>
     public enum Category
     {
         LOGIN,
@@ -10,7 +14,17 @@ namespace OpConnectSdk.Model.Enums
         MEMBERSHIP,
         PASSPORT,
         SOFTWARE_LICENSE,
-        SECURE_NOTE
+        OUTDOOR_LICENSE,
+        SECURE_NOTE,
+        WIRELESS_ROUTER,
+        BANK_ACCOUNT,
+        DRIVER_LICENSE,
+        IDENTITY,
+        REWARD_PROGRAM,
+        DOCUMENT,
+        EMAIL_ACCOUNT,
+        SOCIAL_SECURITY_NUMBER,
+        API_CREDENTIAL
     }
 
 }

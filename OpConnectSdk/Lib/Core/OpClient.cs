@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using OpConnectSdk.Model;
@@ -37,6 +38,18 @@ namespace OpConnectSdk.Lib.Core
             return Deserialize<T>(json: content);
         }
 
+        public virtual async Task<TResult> PostAsync<T, TResult>(string endpoint, T resource)
+        {
+            var data = new StringContent(Serialize(resource), Encoding.UTF8, "application/json");
+
+            var response =  await Client.PostAsync(endpoint.ToString(), data);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            return Deserialize<TResult>(json: content);
+        }
+
         #region Private Methods
 
         private T Deserialize<T>(string json)
@@ -46,6 +59,17 @@ namespace OpConnectSdk.Lib.Core
                 new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
+                }
+            );
+        }
+
+        private string Serialize<T>(T resource)
+        {
+            return JsonSerializer.Serialize(
+                resource, 
+                new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 }
             );
         }
