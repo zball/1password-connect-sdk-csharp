@@ -1,6 +1,13 @@
 **AN UNOFFICIAL 1PASSWORD CONNECT SDK**
 
-This project is a WIP. Currently only supports getting Vaults and Items.
+This project is a WIP. Currently only supports: 
+- Vaults
+    - Get All Vaults w/ Search & Filtering
+    - Get Single Vault
+- Items
+    - Get All Items By Vault w/ Search & Filtering
+    - Get Sinlge Item
+    - Create Item
 
 To Setup: 
 
