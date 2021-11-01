@@ -205,6 +205,44 @@ namespace OpConnectSdkTest
             Assert.Equal($"{ItemService.BASE_URL.Replace("{vaultUUID}", item.Vault.Id)}", capturedValue);
             Assert.Equal(response.Title, item.Title);
         }
+
+        [Fact]
+        public async Task DeleteAsync_When_No_Item_Exists_Returns_NotFoundException()
+        {
+            // Arrange
+            var faker = new Faker();
+            OpClient.Setup(
+                  e => e.DeleteAsync( It.IsAny<string>() )
+            ).Throws(new HttpRequestException(null, null, statusCode: HttpStatusCode.NotFound));  
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<HttpRequestException>( 
+                () => _sut.DeleteAsync(faker.Random.String(12), faker.Random.String(12)) 
+            );
+            Assert.Equal(HttpStatusCode.NotFound, exception.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_WhenSuccessful_ReturnsTrue()
+        {
+            // Arrange
+            var faker = new Faker();
+            var itemId = "itemid";
+            var vaultId = "vaultid";
+            var capturedValue = string.Empty;
+            var captureMatch = new CaptureMatch<string>(s => capturedValue = s);
+
+            OpClient.Setup(
+                  e => e.DeleteAsync( Capture.With(captureMatch) )
+            ).ReturnsAsync(true);  
+
+            // Act
+           var response = await _sut.DeleteAsync(vaultId: vaultId, itemId: itemId);
+
+            // Assert
+            Assert.Equal($"{ItemService.BASE_URL.Replace("{vaultUUID}", vaultId)}/{itemId}", capturedValue);
+            Assert.True(response);
+        }
     }
 
 

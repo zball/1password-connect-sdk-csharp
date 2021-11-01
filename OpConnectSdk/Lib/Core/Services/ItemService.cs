@@ -18,9 +18,9 @@ namespace OpConnectSdk.Lib.Core.Services
         public ItemService(OpClient opClient) : base(opClient){ }
 
         // Example filter: "name eq \"Connect Test\""
-        public async Task<List<Item>> GetListAsync(string vaultUuid, string filter = null)
+        public async Task<List<Item>> GetListAsync(string vaultId, string filter = null)
         {
-            var endpoint = new StringBuilder(BASE_URL).Replace("{vaultUUID}", vaultUuid);
+            var endpoint = new StringBuilder(BASE_URL).Replace("{vaultUUID}", vaultId);
 
             if(!String.IsNullOrEmpty(filter))
             {
@@ -30,11 +30,11 @@ namespace OpConnectSdk.Lib.Core.Services
            return await _httpClient.GetAsync<List<Item>>(Uri.EscapeUriString(endpoint.ToString()));
         }
 
-        public async Task<Item> GetAsync(string vaultUuid, string itemUuid)
+        public async Task<Item> GetAsync(string vaultId, string itemId)
         {
             var endpoint = new StringBuilder(BASE_URL)
-                .Replace("{vaultUUID}", vaultUuid)
-                .AppendFormat("/{0}", itemUuid);
+                .Replace("{vaultUUID}", vaultId)
+                .AppendFormat("/{0}", itemId);
 
            return await _httpClient.GetAsync<Item>(endpoint.ToString());
         }
@@ -56,5 +56,15 @@ namespace OpConnectSdk.Lib.Core.Services
 
            return await _httpClient.PostAsync<CreateItemDto, Item>(endpoint.ToString(), itemDto);
         }
+
+        public async Task<bool> DeleteAsync(string vaultId, string itemId)
+        {
+            var endpoint = new StringBuilder(BASE_URL)
+                .Replace("{vaultUUID}", vaultId)
+                .AppendFormat("/{0}", itemId);
+
+            return await _httpClient.DeleteAsync(endpoint.ToString());
+        }
+        
     }
 }

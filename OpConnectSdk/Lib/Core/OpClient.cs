@@ -50,6 +50,14 @@ namespace OpConnectSdk.Lib.Core
             return Deserialize<TResult>(json: content);
         }
 
+        public virtual async Task<bool> DeleteAsync(string endpoint)
+        {
+            var response =  await Client.DeleteAsync(endpoint.ToString());
+            response.EnsureSuccessStatusCode();
+
+            return true;
+        }
+
         #region Private Methods
 
         private T Deserialize<T>(string json)
