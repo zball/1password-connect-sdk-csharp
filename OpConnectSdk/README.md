@@ -8,6 +8,7 @@ This project is a WIP. Currently only supports:
     - Get All Items By Vault w/ Search & Filtering
     - Get Sinlge Item
     - Create Item
+    - Delete Item
 
 To Setup: 
 
