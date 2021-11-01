@@ -9,6 +9,9 @@ This project is a WIP. Currently only supports:
     - Get Sinlge Item
     - Create Item
     - Delete Item
+- Server
+    - Health Check
+    - Heartbeat
 
 To Setup: 
 
