@@ -15,6 +15,8 @@ This project is a WIP. Currently only supports:
 
 To Setup: 
 
+Install: [Nuget Install](https://www.nuget.org/packages/1PasswordConnectSDK/)
+
 `Startup.cs`
 ```csharp
 services.AddOpConnect(
