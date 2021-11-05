@@ -65,5 +65,6 @@ namespace OpConnectSdk.Lib.Core.Interfaces
         /// <returns>Created Item</returns>
         public Task<Item> CreateAsync(Item item);
         public Task<bool> DeleteAsync(string vaultId, string itemId);
+        public Task<Item> ReplaceAsync(Item item);
     }
 }

@@ -2,6 +2,7 @@ namespace OpConnectSdk.Model
 {
     public class CreateItemDto
     {
+        public string Id { get; set; }
         public VaultDto Vault { get; set; }
         public string Title { get; set; }
         public string Category { get; set; }

@@ -30,7 +30,7 @@ namespace OpConnectSdk.Lib.Core
 
         public virtual async Task<T> GetAsync<T>(string endpoint)
         {
-            var response =  await Client.GetAsync(endpoint.ToString());
+            var response =  await Client.GetAsync(endpoint);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
@@ -42,7 +42,7 @@ namespace OpConnectSdk.Lib.Core
         {
             var data = new StringContent(Serialize(resource), Encoding.UTF8, "application/json");
 
-            var response =  await Client.PostAsync(endpoint.ToString(), data);
+            var response =  await Client.PostAsync(endpoint, data);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
@@ -52,10 +52,22 @@ namespace OpConnectSdk.Lib.Core
 
         public virtual async Task<bool> DeleteAsync(string endpoint)
         {
-            var response =  await Client.DeleteAsync(endpoint.ToString());
+            var response =  await Client.DeleteAsync(endpoint);
             response.EnsureSuccessStatusCode();
 
             return true;
+        }
+
+        public virtual async Task<TResult> PutAsync<T, TResult>(string endpoint, T resource)
+        {
+            var data = new StringContent(Serialize(resource), Encoding.UTF8, "application/json");
+
+            var response =  await Client.PutAsync(endpoint, data);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            return Deserialize<TResult>(json: content);
         }
 
         #region Private Methods

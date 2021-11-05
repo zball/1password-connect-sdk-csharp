@@ -12,8 +12,10 @@ namespace OpConnectSdk.Lib.Core.Services
     public class ItemService : ApiService, IItemService
     {
         public const string ERROR_NO_VAULT_ID = "Item Vault Id can not be null";
+        public const string ERROR_NO_ITEM_ID = "Item Id can not be null";
 
         public const string BASE_URL = "/v1/vaults/{vaultUUID}/items";
+        public const string BASE_PUT_URL = "/v1/vaults/{vaultUUID}/items/{itemUUID}";
 
         public ItemService(OpClient opClient) : base(opClient){ }
 
@@ -64,6 +66,32 @@ namespace OpConnectSdk.Lib.Core.Services
                 .AppendFormat("/{0}", itemId);
 
             return await _httpClient.DeleteAsync(endpoint.ToString());
+        }
+
+        public async Task<Item> ReplaceAsync(Item item)
+        {
+            if(
+                String.IsNullOrEmpty(item.Id) 
+                || String.IsNullOrWhiteSpace(item.Id))
+            {
+                throw new ArgumentException($"ItemService.CreateAsync: {ERROR_NO_ITEM_ID}");
+            }
+
+            if(
+                String.IsNullOrEmpty(item.Vault?.Id) 
+                || String.IsNullOrWhiteSpace(item.Vault?.Id))
+            {
+                throw new ArgumentException($"ItemService.CreateAsync: {ERROR_NO_VAULT_ID}");
+            }
+
+            var endpoint = new StringBuilder(BASE_PUT_URL)
+                .Replace("{vaultUUID}", item.Vault.Id)
+                .Replace("{itemUUID}", item.Id);
+
+            //TODO: Add some validation
+            var itemDto = item.ToCreateItemDto();
+
+           return await _httpClient.PutAsync<CreateItemDto, Item>(endpoint.ToString(), itemDto);
         }
         
     }
