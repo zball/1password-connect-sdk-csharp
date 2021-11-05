@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>1PasswordConnectSDK</PackageId>
-    <Version>1.0.5</Version>
+    <Version>1.0.7</Version>
     <Authors>Zac Ball</Authors>
     <Company>Zac Ball</Company>
     <PackageTags>1Password;Connect</PackageTags>

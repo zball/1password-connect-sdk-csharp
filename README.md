@@ -9,6 +9,7 @@ This project is a WIP. Currently only supports:
     - Get Sinlge Item
     - Create Item
     - Delete Item
+    - Replace Item
 - Server
     - Health Check
     - Heartbeat
