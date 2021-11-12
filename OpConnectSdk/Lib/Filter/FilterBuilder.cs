@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
@@ -43,122 +44,122 @@ namespace OpConnectSdk.Lib.Filter
 
             // make the first character lowercase for the SCIM filter
             var scimFieldName = csharpFieldName.Length > 1 ? char.ToLower(csharpFieldName[0]) + csharpFieldName.Substring(1) : csharpFieldName.ToLower();
-            _tokens.Add(scimFieldName);
+            addToken(scimFieldName);
 
             return this;
         }
 
         public FilterBuilder<T> Group()
         {
-            _tokens.Add("(");
+            addToken("(");
             return this;
         }
 
         public FilterBuilder<T> GroupEnd()
         {
-            _tokens.Add(")");
+            addToken(")");
             return this;
         }
 
         public FilterBuilder<T> And()
         {
-            _tokens.Add(ScimConstants.AND);
+            addToken(ScimConstants.AND);
             return this;
         }
 
         public FilterBuilder<T> Or()
         {
-            _tokens.Add(ScimConstants.OR);
+            addToken(ScimConstants.OR);
             return this;
         }
 
         public FilterBuilder<T> Eq(string value)
         {
-            _tokens.Add(ScimConstants.EQUALS);
-            _tokens.Add(value);
+            addToken(ScimConstants.EQUALS);
+            addToken(value);
             return this;
         }
 
         public FilterBuilder<T> Eq(long value)
         {
-            _tokens.Add(ScimConstants.EQUALS);
-            _tokens.Add(value.ToString());
+            addToken(ScimConstants.EQUALS);
+            addToken(value.ToString());
             return this;
         }
 
         public FilterBuilder<T> Contains(string value)
         {
-            _tokens.Add(ScimConstants.CONTAINS);
-            _tokens.Add(value);
+            addToken(ScimConstants.CONTAINS);
+            addToken(value);
             return this;
         }
 
         public FilterBuilder<T> StartsWith(string value)
         {
-            _tokens.Add(ScimConstants.STARTS_WITH);
-            _tokens.Add(value);
+            addToken(ScimConstants.STARTS_WITH);
+            addToken(value);
             return this;
         }
 
         public FilterBuilder<T> IsPresent()
         {
-            _tokens.Add(ScimConstants.PRESENT);
+            addToken(ScimConstants.PRESENT);
             return this;
         }
 
         public FilterBuilder<T> GreaterThan(string value)
         {
-            _tokens.Add(ScimConstants.GREATER_THAN);
-            _tokens.Add(value);
+            addToken(ScimConstants.GREATER_THAN);
+            addToken(value);
             return this;
         }
 
         public FilterBuilder<T> GreaterThan(long value)
         {
-            _tokens.Add(ScimConstants.GREATER_THAN);
-            _tokens.Add(value.ToString());
+            addToken(ScimConstants.GREATER_THAN);
+            addToken(value.ToString());
             return this;
         }
 
         public FilterBuilder<T> GreaterThanOrEqual(string value)
         {
-            _tokens.Add(ScimConstants.GREATER_THAN_OR_EQUAL);
-            _tokens.Add(value);
+            addToken(ScimConstants.GREATER_THAN_OR_EQUAL);
+            addToken(value);
             return this;
         }
 
         public FilterBuilder<T> GreaterThanOrEqual(long value)
         {
-            _tokens.Add(ScimConstants.GREATER_THAN_OR_EQUAL);
-            _tokens.Add(value.ToString());
+            addToken(ScimConstants.GREATER_THAN_OR_EQUAL);
+            addToken(value.ToString());
             return this;
         }
 
         public FilterBuilder<T> LessThan(string value)
         {
-            _tokens.Add(ScimConstants.LESS_THAN);
-            _tokens.Add(value);
+            addToken(ScimConstants.LESS_THAN);
+            addToken(value);
             return this;
         }
 
         public FilterBuilder<T> LessThan(long value)
         {
-            _tokens.Add(ScimConstants.LESS_THAN);
-            _tokens.Add(value.ToString());
+            addToken(ScimConstants.LESS_THAN);
+            addToken(value.ToString());
             return this;
         }
 
         public FilterBuilder<T> LessThanOrEqual(string value)
         {
-            _tokens.Add(ScimConstants.LESS_THAN_OR_EQUAL);
-            _tokens.Add(value);
+            addToken(ScimConstants.LESS_THAN_OR_EQUAL);
+            addToken(value);
             return this;
         }
 
         public FilterBuilder<T> LessThanOrEqual(long value)
         {
-            _tokens.Add(ScimConstants.LESS_THAN_OR_EQUAL);
-            _tokens.Add(value.ToString());
+            addToken(ScimConstants.LESS_THAN_OR_EQUAL);
+            addToken(value.ToString());
             return this;
         }
 
@@ -180,6 +181,12 @@ namespace OpConnectSdk.Lib.Filter
             }
 
             return sb.ToString().Trim();
+        }
+
+        private void addToken(string token)
+        {
+            var escapedToken = token.Any(c => Char.IsWhiteSpace(c)) ? $"\"{token}\"" : token;
+            _tokens.Add(escapedToken);
         }
     }
 }

@@ -189,5 +189,19 @@ namespace OpConnectSdkTest
             // Assert
             Assert.Equal(expectedFilter, _sut.ToString());
         }
+
+        [Fact]
+        public void FilterBuilder_Wraps_Strings_With_Spaces_In_Quotes()
+        {
+            // Arrange
+            var input = "test string";
+            var expectedFilter = $"eq \"{input}\"";
+
+            // Act
+            _sut.Eq(input);
+
+            // Assert
+            Assert.Equal(expectedFilter, _sut.ToString());
+        }
     }
 }
