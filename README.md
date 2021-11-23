@@ -1,6 +1,6 @@
 **AN UNOFFICIAL 1PASSWORD CONNECT SDK**
 
-This project is a WIP. Currently only supports: 
+This project is a WIP. Currently only supports:
 - Vaults
     - Get All Vaults w/ Search & Filtering
     - Get Single Vault
@@ -14,7 +14,7 @@ This project is a WIP. Currently only supports:
     - Health Check
     - Heartbeat
 
-To Setup: 
+To Setup:
 
 Install: [Nuget Install](https://www.nuget.org/packages/1PasswordConnectSDK/)
 
@@ -52,6 +52,26 @@ public async Task<IEnumerable<WeatherForecast>> Get()
 
     ...
 }
+```
+
+SCIM Filter builder:
+```csharp
+var filter = new FilterBuilder<Item>().Group()
+                 .Field(item => item.Title)
+                 .Eq("test")
+                 .Or()
+                 .Field(item => item.Title)
+                 .Eq("test2")
+                 .GroupEnd()
+                 .And()
+                 .Group()
+                 .Field(item => item.Id)
+                 .Eq("test3")
+                 .Or()
+                 .Field(item => item.Id)
+                 .Eq("test4")
+                 .GroupEnd();
+Console.WriteLine(filter.ToString()); // (title eq test or title eq test2) and (id eq test3 or id eq test4)
 ```
 
 More documentation to come.
